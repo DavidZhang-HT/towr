@@ -88,6 +88,28 @@ target_link_libraries(${PROJECT_NAME}-example
 )
 add_test(${PROJECT_NAME}-example ${PROJECT_NAME}-example)
 
+# advanced demo showing different robot types
+add_executable(${PROJECT_NAME}-advanced-demo 
+  test/advanced_demo.cpp
+)
+target_link_libraries(${PROJECT_NAME}-advanced-demo  
+  PRIVATE
+    ${PROJECT_NAME} 
+    ifopt::ifopt_ipopt
+)
+add_test(${PROJECT_NAME}-advanced-demo ${PROJECT_NAME}-advanced-demo)
+
+# simple demo with detailed analysis
+add_executable(${PROJECT_NAME}-simple-demo 
+  test/simple_demo.cpp
+)
+target_link_libraries(${PROJECT_NAME}-simple-demo  
+  PRIVATE
+    ${PROJECT_NAME} 
+    ifopt::ifopt_ipopt
+)
+add_test(${PROJECT_NAME}-simple-demo ${PROJECT_NAME}-simple-demo)
+
 # unit tests of costs/constraints
 find_package(GTest QUIET)
 if (TARGET GTest::GTest) # only build when modern targets exists
