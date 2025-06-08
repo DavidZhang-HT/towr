@@ -134,7 +134,20 @@ if(MeshcatCpp_FOUND)
   )
   add_test(${PROJECT_NAME}-meshcat-demo ${PROJECT_NAME}-meshcat-demo)
 
-  message(STATUS "MeshCat demo will be built: ${PROJECT_NAME}-meshcat-demo")
+  # Browser visualization demo
+  add_executable(${PROJECT_NAME}-browser-demo
+    test/browser_demo.cpp
+  )
+  target_link_libraries(${PROJECT_NAME}-browser-demo
+    PRIVATE
+      ${PROJECT_NAME}
+      ifopt::ifopt_ipopt
+  )
+  add_test(${PROJECT_NAME}-browser-demo ${PROJECT_NAME}-browser-demo)
+
+  message(STATUS "MeshCat demos will be built:")
+  message(STATUS "  - ${PROJECT_NAME}-meshcat-demo (basic demo)")
+  message(STATUS "  - ${PROJECT_NAME}-browser-demo (interactive browser demo)")
 endif()
 
 # unit tests of costs/constraints

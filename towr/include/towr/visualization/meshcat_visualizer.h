@@ -146,6 +146,44 @@ public:
    */
   void Join();
 
+  /**
+   * @brief Add target marker for visualization.
+   * @param position Target position
+   * @param name Marker name
+   * @param color RGB color (0-1 range)
+   * @param radius Sphere radius
+   */
+  void AddTargetMarker(const Vector3d& position,
+                      const std::string& name = "target",
+                      const Vector3d& color = Vector3d(1.0, 0.0, 0.0),
+                      double radius = 0.03);
+
+  /**
+   * @brief Add trajectory path visualization.
+   * @param points Trajectory points
+   * @param name Path name
+   * @param color RGB color
+   * @param line_width Line width
+   */
+  void AddTrajectoryPath(const std::vector<Vector3d>& points,
+                        const std::string& name,
+                        const Vector3d& color = Vector3d(0.0, 0.0, 1.0),
+                        double line_width = 0.01);
+
+  /**
+   * @brief Set camera position and orientation.
+   * @param position Camera position
+   * @param target Look-at target
+   */
+  void SetCameraView(const Vector3d& position, const Vector3d& target);
+
+  /**
+   * @brief Add text information overlay.
+   * @param text Text content
+   * @param position Screen position (normalized 0-1)
+   */
+  void AddTextOverlay(const std::string& text, const Vector3d& position);
+
 private:
   std::unique_ptr<MeshcatCpp::Meshcat> meshcat_;
   std::unique_ptr<MeshcatCpp::Material> robot_material_;

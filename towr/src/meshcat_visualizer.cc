@@ -461,6 +461,87 @@ void MeshcatVisualizer::PlayTrajectory(const SplineHolder& splines,
   } while (loop);
 }
 
+void MeshcatVisualizer::AddTargetMarker(const Vector3d& position,
+                                       const std::string& name,
+                                       const Vector3d& color,
+                                       double radius) {
+  auto target_material = std::make_unique<MeshcatCpp::Material>();
+  target_material->set_color(static_cast<int>(color.x() * 255),
+                            static_cast<int>(color.y() * 255),
+                            static_cast<int>(color.z() * 255));
+  target_material->set_opacity(0.8);
+
+  std::string target_name = "markers/" + name;
+  meshcat_->set_object(target_name, MeshcatCpp::Sphere(radius), *target_material);
+
+  auto target_transform = EigenToMeshcatTransform(position);
+  meshcat_->set_transform(target_name, target_transform);
+
+  std::cout << "🎯 添加目标标记: " << name
+            << " 位置: (" << position.x() << ", " << position.y() << ", " << position.z() << ")" << std::endl;
+}
+
+void MeshcatVisualizer::AddTrajectoryPath(const std::vector<Vector3d>& points,
+                                         const std::string& name,
+                                         const Vector3d& color,
+                                         double line_width) {
+  if (points.size() < 2) return;
+
+  auto path_material = std::make_unique<MeshcatCpp::Material>();
+  path_material->set_color(static_cast<int>(color.x() * 255),
+                          static_cast<int>(color.y() * 255),
+                          static_cast<int>(color.z() * 255));
+  path_material->set_opacity(0.7);
+
+  // Create path using connected cylinders
+  for (size_t i = 1; i < points.size(); ++i) {
+    Vector3d start = points[i-1];
+    Vector3d end = points[i];
+    Vector3d segment = end - start;
+    double length = segment.norm();
+
+    if (length > 1e-6) {
+      Vector3d center = start + 0.5 * segment;
+      Vector3d direction = segment.normalized();
+
+      // Create rotation matrix
+      Vector3d z_axis = direction;
+      Vector3d x_axis = (std::abs(z_axis.dot(Vector3d::UnitX())) < 0.9) ?
+                        Vector3d::UnitX() : Vector3d::UnitY();
+      Vector3d y_axis = z_axis.cross(x_axis).normalized();
+      x_axis = y_axis.cross(z_axis);
+
+      Eigen::Matrix3d rotation;
+      rotation.col(0) = x_axis;
+      rotation.col(1) = y_axis;
+      rotation.col(2) = z_axis;
+
+      std::string segment_name = "paths/" + name + "/segment_" + std::to_string(i);
+      meshcat_->set_object(segment_name,
+                          MeshcatCpp::Cylinder(line_width, length),
+                          *path_material);
+
+      auto segment_transform = EigenToMeshcatTransform(center, rotation);
+      meshcat_->set_transform(segment_name, segment_transform);
+    }
+  }
+
+  std::cout << "📈 添加轨迹路径: " << name << " (" << points.size() << " 个点)" << std::endl;
+}
+
+void MeshcatVisualizer::SetCameraView(const Vector3d& position, const Vector3d& target) {
+  // Note: MeshCat-cpp camera control implementation would go here
+  // This is a placeholder for the interface
+  std::cout << "📷 设置相机视角: 位置(" << position.x() << ", " << position.y() << ", " << position.z()
+            << ") 目标(" << target.x() << ", " << target.y() << ", " << target.z() << ")" << std::endl;
+}
+
+void MeshcatVisualizer::AddTextOverlay(const std::string& text, const Vector3d& position) {
+  // Note: MeshCat-cpp text overlay implementation would go here
+  // This is a placeholder for the interface
+  std::cout << "📝 添加文本覆盖: " << text << std::endl;
+}
+
 void MeshcatVisualizer::Join() {
   meshcat_->join();
 }
