@@ -13,12 +13,13 @@
 
 A base-set of variables, costs and constraints that can be combined and extended to formulate trajectory optimization problems for legged systems. These implementations have been used to generate a variety of motions such as monoped hopping, biped walking, or a complete quadruped trotting cycle, while optimizing over the gait and step durations in less than 100ms ([paper](https://ieeexplore.ieee.org/document/8283570/)).  
 
-Features:  
-:heavy_check_mark: Intuitive and efficient formulation of variables, cost and constraints using [Eigen].   
-:heavy_check_mark: [ifopt] enables using the high-performance solvers [Ipopt] and [Snopt].  
-:heavy_check_mark: Elegant rviz visualization of motion plans using [xpp].  
-:heavy_check_mark: [ROS]/[catkin] integration (optional).  
-:heavy_check_mark: Light-weight ([~6k lines](https://i.imgur.com/gP3gv34.png) of code) makes it easy to use and extend.  
+Features:
+:heavy_check_mark: Intuitive and efficient formulation of variables, cost and constraints using [Eigen].
+:heavy_check_mark: [ifopt] enables using the high-performance solvers [Ipopt] and [Snopt].
+:heavy_check_mark: Elegant rviz visualization of motion plans using [xpp].
+:heavy_check_mark: **NEW**: Interactive 3D visualization using [MeshCat] (web-based, cross-platform).
+:heavy_check_mark: [ROS]/[catkin] integration (optional).
+:heavy_check_mark: Light-weight ([~6k lines](https://i.imgur.com/gP3gv34.png) of code) makes it easy to use and extend.
 
 <br>
 
@@ -108,13 +109,30 @@ We provide a [ROS]-wrapper for the pure cmake towr library, which adds a keyboar
   ```
   
 ## Run
+
+### Option 1: MeshCat 3D Visualization (NEW!)
+  ```bash
+  # Install MeshCat-cpp (one-time setup)
+  ./install_meshcat.sh
+
+  # Build with MeshCat support
+  cd towr/build
+  cmake .. -DCMAKE_BUILD_TYPE=Release
+  make -j4
+
+  # Run MeshCat demo
+  ./towr-meshcat-demo
+  # Open the displayed URL in your browser (e.g., http://localhost:7000)
+  ```
+
+### Option 2: ROS/rviz Visualization
   Launch the program using
   ```bash
   roslaunch towr_ros towr_ros.launch  # debug:=true  (to debug with gdb)
   ```
-  Click in the xterm terminal and hit 'o'. 
-  
-  Information about how to tune the paramters can be found [here](http://docs.ros.org/api/towr/html/group__Parameters.html). 
+  Click in the xterm terminal and hit 'o'.
+
+  Information about how to tune the paramters can be found [here](http://docs.ros.org/api/towr/html/group__Parameters.html).
   
 ## Develop
 #### Library overview
@@ -192,4 +210,5 @@ The work was carried out at the following institutions:
 [catkin]: http://wiki.ros.org/catkin
 [catkin tools]: http://catkin-tools.readthedocs.org/
 [Eigen]: http://eigen.tuxfamily.org
+[MeshCat]: https://github.com/ami-iit/meshcat-cpp
 [this example]: https://github.com/ethz-adrl/ifopt/blob/master/ifopt_core/test/ifopt/test_vars_constr_cost.h

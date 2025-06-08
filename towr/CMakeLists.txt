@@ -4,6 +4,15 @@ project(towr VERSION 1.3.2)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 find_package(ifopt 2.0.1 REQUIRED)
 
+# Find MeshCat-cpp for visualization (optional)
+find_package(MeshcatCpp QUIET)
+if(MeshcatCpp_FOUND)
+  message(STATUS "MeshCat-cpp found - enabling MeshCat visualization")
+  add_definitions(-DTOWR_WITH_MESHCAT)
+else()
+  message(STATUS "MeshCat-cpp not found - MeshCat visualization disabled")
+endif()
+
 
 ###########
 ## Build ##
@@ -61,10 +70,13 @@ add_library(${PROJECT_NAME} SHARED
   src/spline_holder.cc
   src/euler_converter.cc
   src/phase_durations_observer.cc
+  # visualization (optional)
+  $<$<BOOL:${MeshcatCpp_FOUND}>:src/meshcat_visualizer.cc>
 )
-target_link_libraries(${PROJECT_NAME} 
-  PUBLIC 
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
     ifopt::ifopt_core
+    $<$<BOOL:${MeshcatCpp_FOUND}>:MeshcatCpp::MeshcatCpp>
 )
 target_include_directories(${PROJECT_NAME} 
   PUBLIC
@@ -109,6 +121,21 @@ target_link_libraries(${PROJECT_NAME}-simple-demo
     ifopt::ifopt_ipopt
 )
 add_test(${PROJECT_NAME}-simple-demo ${PROJECT_NAME}-simple-demo)
+
+# MeshCat visualization demo (only if MeshCat-cpp is available)
+if(MeshcatCpp_FOUND)
+  add_executable(${PROJECT_NAME}-meshcat-demo
+    test/meshcat_demo.cpp
+  )
+  target_link_libraries(${PROJECT_NAME}-meshcat-demo
+    PRIVATE
+      ${PROJECT_NAME}
+      ifopt::ifopt_ipopt
+  )
+  add_test(${PROJECT_NAME}-meshcat-demo ${PROJECT_NAME}-meshcat-demo)
+
+  message(STATUS "MeshCat demo will be built: ${PROJECT_NAME}-meshcat-demo")
+endif()
 
 # unit tests of costs/constraints
 find_package(GTest QUIET)
