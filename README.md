@@ -35,14 +35,37 @@ Features:
 [<img src="https://i.imgur.com/8M4v4aP.gif" />](https://youtu.be/0jE46GqzxMM "Show more examples on Youtube")
 
 ## Install
+
+### Quick Start (MacOS) 🍎
+For MacOS users, we provide an automated installation script:
+```bash
+git clone https://github.com/DavidZhang-HT/towr.git
+cd towr
+git checkout MeshCat  # Switch to MeshCat branch for latest features
+
+# Install dependencies (Homebrew required)
+chmod +x install_dependencies_macos.sh
+./install_dependencies_macos.sh
+
+# Build the project
+chmod +x build_towr.sh
+./build_towr.sh
+
+# Run comprehensive tests
+chmod +x run_comprehensive_tests.sh
+./run_comprehensive_tests.sh
+```
+
+### Traditional Installation
 The easiest way to install is through the [ROS binaries](http://wiki.ros.org/towr):
 ```bash
 sudo apt-get install ros-<ros-distro>-towr-ros
 ```
 
-In case these don't yet exist for your distro, there are two ways to build this code from source:
+In case these don't yet exist for your distro, there are three ways to build this code from source:
 * [Option 1](#towr-with-cmake): core library and hopper-example with pure [CMake].
-* [Option 2](#towr-ros-with-catkin) (recommended): core library & GUI & ROS-rviz-visualization built with [catkin] and [ROS]. 
+* [Option 2](#towr-ros-with-catkin): core library & GUI & ROS-rviz-visualization built with [catkin] and [ROS].
+* [Option 3](#macos-installation): MacOS-specific installation with Homebrew (recommended for Mac users).
 
 
 #### <a name="towr-with-cmake"></a> Building with CMake
@@ -106,6 +129,60 @@ We provide a [ROS]-wrapper for the pure cmake towr library, which adds a keyboar
   <package>
     <depend>towr</depend>
   </package>
+  ```
+
+#### <a name="macos-installation"></a> MacOS Installation with Homebrew
+For MacOS users (both Intel and Apple Silicon), we provide optimized installation:
+
+* **Prerequisites**: Install [Homebrew](https://brew.sh/) if not already installed:
+  ```bash
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  ```
+
+* **Automated Installation**: Use our comprehensive installation script:
+  ```bash
+  git clone https://github.com/DavidZhang-HT/towr.git
+  cd towr
+  git checkout MeshCat  # Latest features with MeshCat visualization
+
+  # Install all dependencies
+  chmod +x install_dependencies_macos.sh
+  ./install_dependencies_macos.sh
+
+  # Build the project
+  chmod +x build_towr.sh
+  ./build_towr.sh
+  ```
+
+* **Manual Installation**: If you prefer manual control:
+  ```bash
+  # Install dependencies via Homebrew
+  brew install cmake eigen ipopt cppunit python3 python-matplotlib
+
+  # Clone and build
+  git clone https://github.com/DavidZhang-HT/towr.git && cd towr
+  git checkout MeshCat
+  cd towr && mkdir build && cd build
+  cmake .. -DCMAKE_BUILD_TYPE=Release
+  make -j$(sysctl -n hw.ncpu)  # Use all CPU cores
+  ```
+
+* **Test Installation**: Verify everything works:
+  ```bash
+  # Run comprehensive test suite
+  ./run_comprehensive_tests.sh
+
+  # Or run individual tests
+  cd towr/build
+  export DYLD_LIBRARY_PATH=/usr/local/lib:$DYLD_LIBRARY_PATH
+  ./towr-test      # Unit tests
+  ./towr-example   # Basic example
+  ```
+
+* **Python Visualization**: Test the visualization features:
+  ```bash
+  # Run Python MeshCat integration demo
+  /opt/homebrew/bin/python3 demo_meshcat_integration.py
   ```
   
 ## Run
